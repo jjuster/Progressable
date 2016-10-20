@@ -65,7 +65,7 @@ extension Progressable where Self: UIView {
         }
     }
     
-    internal var progressLayer: CALayer {
+    public var progressLayer: CALayer {
         get {
             if let progressLayer = objc_getAssociatedObject(self, &progressLayerAttr) as? CALayer {
                 return progressLayer
