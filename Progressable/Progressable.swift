@@ -16,7 +16,7 @@ public protocol Progressable: class {
     
     func initProgress()
     func layoutProgress()
-    func setProgress(progress: CGFloat, withDuration duration: TimeInterval)
+    func setProgress(progress: CGFloat, withDuration duration: NSTimeInterval)
 }
 
 var progressAttr = "progressAttr"
@@ -58,10 +58,10 @@ extension Progressable where Self: UIView {
     public var progressColor: UIColor? {
         get {
             guard let color = self.progressLayer.backgroundColor else { return nil }
-            return UIColor(cgColor: color)
+            return UIColor(CGColor: color)
         }
         set {
-            self.progressLayer.backgroundColor = newValue?.cgColor
+            self.progressLayer.backgroundColor = newValue?.CGColor
         }
     }
     
@@ -97,14 +97,14 @@ extension Progressable where Self: UIView {
         }
     }
     
-    fileprivate func disableImplicitAnimations(updates: () -> ()) {
+    private func disableImplicitAnimations(updates: () -> ()) {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         updates()
         CATransaction.commit()
     }
     
-    public func setProgress(progress: CGFloat, withDuration duration: TimeInterval) {
+    public func setProgress(progress: CGFloat, withDuration duration: NSTimeInterval) {
         let progressLayer = self.progressLayer
         let toFrame = self.frame(forProgress: progress)
         let toBounds = CGRect(x: 0, y: 0,
@@ -112,22 +112,22 @@ extension Progressable where Self: UIView {
                               height: toFrame.size.height)
         
         let animation = CABasicAnimation(keyPath: "bounds")
-        animation.fromValue = NSValue(cgRect: self.progressLayer.visibleBounds())
-        animation.toValue = NSValue(cgRect: toBounds)
+        animation.fromValue = NSValue(CGRect: self.progressLayer.visibleBounds())
+        animation.toValue = NSValue(CGRect: toBounds)
         animation.duration = duration
         animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
         
         self.progress = progress
         progressLayer.frame = toFrame
-        progressLayer.add(animation, forKey: "bounds")
+        progressLayer.addAnimation(animation, forKey: "bounds")
     }
 }
 
 extension CALayer {
-    fileprivate func visibleBounds() -> CGRect {
-        if self.animation(forKey: "bounds") != nil {
-            let currentLayer = self.presentation()
-            return (currentLayer?.value(forKey: "bounds") as! NSValue).cgRectValue
+    private func visibleBounds() -> CGRect {
+        if self.animationForKey("bounds") != nil {
+            let currentLayer = self.presentationLayer()
+            return (currentLayer?.valueForKey("bounds") as! NSValue).CGRectValue()
         } else {
             return self.bounds
         }
